@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thrift Culture | Kenya's Premium Thrift Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;7display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .auth-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-card:hover {
+            transform: scale(1.03);
+        }
+        
+        .review-card:hover {
+            transform: scale(1.02);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        .slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .cart-item-enter {
+            animation: cartItemEnter 0.3s ease-out;
+        }
+        
+        @keyframes cartItemEnter {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .hidden-reviews {
+            display: none;
+        }
+        
+        .size-filter.active {
+            background-color: #9333ea;
+            color: white;
+            border-color: #9333ea;
+        }
+        
+        .map-container {
+            height: 300px;
+            width: 100%;
+        }
+        
+        .auth-form {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 2rem;
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        .size-filter {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover {
+            border-color: #9333ea;
+        }
+        
+        .payment-method.selected {
+            border-color: #9333ea;
+            background-color: #f3e8ff;
+        }
+        
+        .tracking-progress {
+            position: relative;
+            height: 4px;
+            background-color: #e5e7eb;
+            border-radius: 2px;
+            margin: 20px 0;
+        }
+        
+        .tracking-progress-bar {
+            position: absolute;
+            height: 100%;
+            background-color: #9333ea;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+        
+        .tracking-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .tracking-step {
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .tracking-step.active {
+            color: #9333ea;
+            font-weight: 600;
+        }
+        
+        .tracking-step.completed {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        .tracking-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            margin: 0 auto 5px;
+            position: relative;
+        }
+        
+        .tracking-dot.completed {
+            background-color: #10b981;
+        }
+        
+        .tracking-dot.active {
+            background-color: #9333ea;
+        }
+        
+        .whatsapp-float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 3px #999;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .whatsapp-float:hover {
+            background-color: #128C7E;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/254712492105?text=Hi%20Thrift%20Culture,%20I%20would%20like%20to%20get%20more%20info%20about%20your%20products" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-tshirt text-2xl text-purple-600"></i>
+                <a href="#" class="text-xl font-bold text-gray-800">Thrift Culture</a>
+            </div>
+            
+            <div class="hidden md:flex space-x-8">
+                <a href="#home" class="nav-link text-gray-700 hover:text-purple-600 transition duration-300">Home</a>
+                <a href="#shop" class="nav-link text-gray-7hover:text-purple-600 transition duration-300">Shop</a>
+                <a href="#new-arrivals" class="nav-link text-gray-700 hover:text-purple-600 transition duration-300">New Arrivals</a>
+                <a href="#reviews" class="nav-link text-gray-700 hover:text-purple-600 transition duration-300">Reviews</a>
+                <a href="#contact" class="nav-link text-gray-700 hover:text-purple-600 transition duration-300">Contact</a>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <button id="cart-btn" class="relative">
+                    <i class="fas fa-shopping-cart text-xl text-gray-700 hover:text-purple-600 transition"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-purple-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+                
+                <button id="login-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-full transition duration-300">
+                    Login
+                </button>
+                
+                <button class="md:hidden text-gray-700" id="mobile-menu-btn">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="#home" class="block py-2 text-gray-700 hover:text-purple-600">Home</a>
+            <a href="#shop" class="block py-2 text-gray-700 hover:text-purple-600">Shop</a>
+            <a href="#new-arrivals" class="block py-2 text-gray-700 hover:text-purple-600">New Arrivals</a>
+            <a href="#reviews" class="block py-2 text-gray-700 hover:text-purple-600">Reviews</a>
+            <a href="#contact" class="block py-2 text-gray-700 hover:text-purple-600">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 slide-up">Kenya's Premium Thrift Store</h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-2xl mx-auto slide-up">Authentic Kenyan street fashion delivered to your doorstep</p>
+            <a href="#shop" class="inline-block bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-full text-lg font-medium transition duration-300 slide-up">
+                Shop Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="shop" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 fade-in">Shop By Category</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Men's Category -->
+                <div class="category-card bg-gray-50 rounded-lg overflow-hidden shadow-md transition duration-300 fade-in">
+                    <img src="https://images.unsplash.com/photo-1527719327859-c6ce80353573?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Men's Fashion" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Men's Fashion</h3>
+                        <p class="text-gray-600 mb-4">Trendy thrifted clothing for men</p>
+                        <a href="#men" class="text-purple-600 font-medium hover:text-purple-700 transition">Browse Collection →</a>
+                    </div>
+                </div>
+                
+                <!-- Women's Category -->
+                <div class="category-card bg-gray-50 rounded-lg overflow-hidden shadow-md transition duration-300 fade-in">
+                    <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format fit=crop&w=774&q=80" alt="Women's Fashion" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Women's Fashion</h3>
+                        <p class="text-gray-600 mb-4">Stylish thrifted outfits for women</p>
+                        <a href="#women" class="text-purple-600 font-medium hover:text-purple-700 transition">Browse Collection →</a>
+                    </div>
+                </div>
+                
+                <!-- Kids Category -->
+                <div class="category-card bg-gray-50 rounded-lg overflow-hidden shadow-md transition duration-300 fade-in">
+                    <img src="https://images.unsplash.com/photo-1604917019118-3a7b528a35e0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Kids Fashion" class="w-full h-64 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Kids Fashion</h3>
+                        <p class="text-gray-600 mb-4">Adorable thrifted clothes for kids</p>
+                        <a href="#kids" class="text-purple-600 font-medium hover:text-purple-700 transition">Browse Collection →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Arrivals Section -->
+    <section id="new-arrivals" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold fade-in">New Arrivals</h2>
+                <div class="flex space-x-2">
+                    <button id="best-sellers-btn" class="bg-purple-600 text-white px-4 py-2 rounded-full text-sm hover:bg-purple-700 transition">
+                        Best Sellers
+                    </button>
+                    <button id="trending-btn" class="bg-white text-purple-600 border border-purple-600 px-4 py-2 rounded-full text-sm hover:bg-purple-50 transition">
+                        Trending Now
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Size Filter -->
+            <div class="mb-6 flex space-x-2">
+                <span class="text-gray-700 mr-2">Filter by size:</span>
+                <span class="size-filter border px-3 py-1 rounded-full text-sm" data-size="XS">XS</span>
+                <span class="size-filter border px-3 py-1 rounded-full text-sm" data-size="S">S</span>
+                <span class="size-filter border px-3 py-1 rounded-full text-sm" data-size="M">M</span>
+                <span class="size-filter border px-3 py-1 rounded-full text-sm" data-size="L">L</span>
+                <span class="size-filter border px-3 py-1 rounded-full text-sm" data-size="XL">XL</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Product 1 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 fade-in">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=736&q=80" alt="Denim Jacket" class="w-full h-64 object-cover">
+                        <span class="absolute top-2 right-2 bg-yellow-400 text-xs font-bold px-2 py-1 rounded-full">NEW</span>
+                        <span class="absolute bottom-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded">Same Day Delivery</span>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold">Vintage Denim Jacket</h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-purple-600 font-bold">KSh 1,200</span>
+                            <button class="add-to-cart text-gray-400 hover:text-purple-600 transition" data-id="1" data-name="Vintage Denim Jacket" data-price="1200">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 flex justify-between text-xs text-gray-500">
+                            <span>Size: M, L, XL</span>
+                            <span>★ 4.8 (24)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 fade-in">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Graphic T-Shirt" class="w-full h-64 object-cover">
+                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">TRENDING</span>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold">Retro Graphic T-Shirt</h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-purple-600 font-bold">KSh 800</span>
+                            <button class="add-to-cart text-gray-400 hover:text-purple-600 transition" data-id="2" data-name="Retro Graphic T-Shirt" data-price="800">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 flex justify-between text-xs text-gray-500">
+                            <span>Size: S, M, L</span>
+                            <span>★ 4.9 (36)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 fade-in">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D3D&auto=format&fit=crop&w=774&q=80" alt="Floral Dress" class="w-full h-64 object-cover">
+                        <span class="absolute top-2 right-2 bg-yellow-400 text-xs font-bold px-2 py-1 rounded-full">NEW</span>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold">Vintage Floral Dress</h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-purple-600 font-bold">KSh 1,500</span>
+                            <button class="add-to-cart text-gray-400 hover:text-purple-600 transition" data-id="3" data-name="Vintage Floral Dress" data-price="1500">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 flex justify-between text-xs text-gray-500">
+                            <span>Size: S, M</span>
+                            <span>★ 4.7 (18)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition duration-300 fade-in">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd640d2f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Leather Jacket" class="w-full h-64 object-cover">
+                        <span class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">TRENDING</span>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold">Classic Leather Jacket</h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-purple-600 font-bold">KSh 2,800</span>
+                            <button class="add-to-cart text-gray-400 hover:text-purple-600 transition" data-id="4, data-name="Classic Leather Jacket" data-price="2800">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2 flex justify-between text-xs text-gray-500">
+                            <span>Size: M, L, XL</span>
+                            <span>★ 4.9 (42)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-10">
+                <button class="bg-white text-purple-600 border border-purple-600 px-6 py-2 rounded-full hover:bg-purple-50 transition">
+                    View All Products
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 fade-in">What Our Customers Say</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Review 1 -->
+                <div class="review-card bg-gray-50 p-6 rounded-lg shadow-md transition duration-300 fade-in">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sarah K.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Sarah K.</p>
+                            <div class="flex space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"I absolutely love my vintage denim jacket from Thrift Culture! The quality is amazing and it arrived so quickly. Will definitely be shopping here again!"</p>
+                </div>
+                
+                <!-- Review 2 -->
+                <div class="review-card bg-gray-50 p-6 rounded-lg shadow-md transition duration-300 fade-in">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/45.jpg" alt="James M.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">James M.</p>
+                            <div class="flex space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"Great selection of unique pieces at affordable prices. The leather jacket I bought looks even better in person than in the photos."</p>
+                </div>
+                
+                <!-- Review 3 -->
+                <div class="review-card bg-gray-50 p-6 rounded-lg shadow-md transition duration-300 fade-in">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Amina W.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Amina W.</p>
+                            <div class="flex space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"The floral dress I ordered fits perfectly and is such great quality for the price. Customer service was excellent when I had a question about sizing."</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-10">
+                <button id="load-more-reviews" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full transition">
+                    Load More Reviews
+                </button>
+            </div>
+            
+            <!-- Hidden Reviews -->
+            <div id="hidden-reviews" class="hidden-reviews grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
+                <!-- Review 4 -->
+                <div class="review-card bg-gray-50 p-6 rounded-lg shadow-md transition duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/22.jpg" alt="David O.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">David O.</p>
+                            <div class="flex space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"Fast delivery and good quality items. The polo shirt I bought is comfortable and stylish. Will shop here again for sure."</p>
+                </div>
+                
+                <!-- Review 5 -->
+                <div class="review-card bg-gray-50 p-6 rounded-lg shadow-md transition duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/54.jpg" alt="Grace N.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Grace N.</p>
+                            <div class="flex space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"I'm so impressed with the quality of the clothes I've purchased from Thrift Culture. The prices are reasonable and the items are unique. Highly recommend!"</p>
+                </div>
+                
+                <!-- Review 6 -->
+                <div class="review-card bg-gray-50 p-6 rounded-lg shadow-md transition duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/67.jpg" alt="Peter K.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Peter K.</p>
+                            <div class="flex space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"The blazer I ordered fits perfectly and looks very stylish. Delivery was faster than expected. Great shopping experience overall."</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8 fade-in">
+                    <h2 class="text-3xl font-bold mb-6">Our Thrift Culture Story</h2>
+                    <p class="text-gray-600 mb-4">
+                        Founded in 2018, Thrift Culture began as a small passion project with a mission to bring unique, high-quality second-hand fashion to Kenya at affordable prices.
+                    </p>
+                    <p class="text-gray-600 mb-4">
+                        We carefully curate each item in our collection to ensure it meets our standards for quality, style, and condition. Our team hand-selects every piece to bring you the best of vintage and contemporary thrifted fashion.
+                    </p>
+                    <p class="text-gray-600">
+                        We believe in sustainable fashion that doesn't compromise on style. By choosing thrifted clothing, you're not only getting unique pieces but also helping reduce textile waste.
+                    </p>
+                </div>
+                <div class="md:w-1/2 fade-in">
+                    <img src="https://images.unsplash.com/photo-1520004434532-668416a08753?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80" alt="Our Team" class="w-full h-auto rounded-lg shadow-md">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12 fade-in">Get In Touch</h2>
+            
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/2 fade-in">
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md h-full">
+                        <h3 class="text-xl font-semibold mb-4">Contact Information</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <i class="fas fa-map-marker-alt text-purple-600 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-medium">Our Location</h4>
+                                    <p class="text-gray-600">123 Thrift Street, Nairobi, Kenya</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <i class="fas fa-phone-alt text-purple-600 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-medium">Phone</h4>
+                                    <p class="text-gray-600">+254 712 492 105</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <i class="fas fa-envelope text-purple-600 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-medium">Email</h4>
+                                    <p class="text-gray-600">hello@thriftculture.co.ke</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <i class="fas fa-clock text-purple-600 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-medium">Opening Hours</h4>
+                                    <p class="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM</p>
+                                    <p class="text-gray-600">Saturday: 10:00 AM - 4:00 PM</p>
+                                    <p class="text-gray-600">Sunday: Closed</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <h4 class="font-medium mb-2">Follow Us</h4>
+                            <div class="flex space-x-4">
+                                <a href="#" class="text-gray-600 hover:text-purple-600 transition"><i class="fab fa-facebook-f text-xl"></i></a>
+                                <a href="#" class="text-gray-600 hover:text-purple-600 transition"><i class="fab fa-twitter text-xl"></i></a>
+                                <a href="#" class="text-gray-600 hover:text-purple-600 transition"><i class="fab fa-instagram text-xl"></i></a>
+                                <a href="#" class="text-gray-600 hover:text-purple-600 transition"><i class="fab fa-tiktok text-xl"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:w-1/2 fade-in">
+                    <div class="bg-gray-50 p-6 rounded-lg shadow-md h-full">
+                        <h3 class="text-xl font-semibold mb-4">Send Us a Message</h3>
+                        <form>
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 mb-2">Name</label>
+                                <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-700 mb-2">Email</label>
+                                <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="subject" class="block text-gray-700 mb-2">Subject</label>
+                                <input type="text" id="subject" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="message" class="block text-gray-700 mb-2">Message</label>
+                                <textarea id="message" rows="4" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-full transition">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 fade-in">
+                <h3 class="text-xl font-semibold mb-4 text-center">Find Us on the Map</h3>
+                <div class="map-container rounded-lg shadow-md" id="map"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="py-12 bg-purple-600 text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl md:text-3xl font-bold mb-4 fade-in">Subscribe to Our Newsletter</h2>
+            <p class="mb-6 max-w-2xl mx-auto fade-in">Get exclusive offers, new arrival alerts, and style tips delivered to your inbox.</p>
+            
+            <form class="max-w-md mx-auto flex fade-in">
+                <input type="email" placeholder="Your email address" class="flex-grow px-4 py-3 rounded-l-lg focus:outline-none text-gray-900">
+                <button type="submit" class="bg-purple-800 hover:bg-purple-900 px-6 py-3 rounded-r-lg transition">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="fade-in">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-tshirt text-2xl text-purple-600"></i>
+                        <span class="text-xl font-bold">Thrift Culture</span>
+                    </div>
+                    <p class="text-gray-400">Kenya's premium thrift store offering unique, high-quality second-hand fashion at affordable prices.</p>
+                </div>
+                
+                <div class="fade-in">
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="#shop" class="text-gray-400 hover:text-white transition">Shop</a></li>
+                        <li><a href="#new-arrivals" class="text-gray-400 hover:text-white transition">New Arrivals</a></li>
+                        <li><a href="#reviews" class="text-gray-400 hover:text-white transition">Reviews</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="fade-in">
+                    <h3 class="text-lg font-semibold mb-4">Customer Service</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">FAQs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Shipping Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Returns & Exchanges</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Size Guide</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div class="fade-in">
+                    <h3 class="text-lg font-semibold mb-4">Payment Methods</h3>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <i class="fab fa-cc-m-pesa text-3xl text-gray-400 hover:text-white transition"></i>
+                        <i class="fab fa-cc-visa text-3xl text-gray-400 hover:text-white transition"></i>
+                        <i class="fab fa-cc-mastercard text-3xl text-gray-400 hover:text-white transition"></i>
+                        <i class="fab fa-cc-paypal text-3xl text-gray-400 hover:text-white transition"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Download Our App</h3>
+                    <div class="flex space-x-2">
+                        <a href="#" class="bg-black text-white px-3 py-2 rounded flex items-center">
+                            <i class="fab fa-apple mr-2"></i>
+                            <span class="text-xs">
+                                Download on the<br>
+                                <span class="font-bold">App Store</span>
+                            </span>
+                        </a>
+                        <a href="#" class="bg-black text-white px-3 py-2 rounded flex items-center">
+                            <i class="fab fa-google-play mr-2"></i>
+                            <span class="text-xs">
+                                Get it on<br>
+                                <span class="font-bold">Google Play</span>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 fade-in">
+                <p>&copy; 2023 Thrift Culture. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Modal -->
+    <div id="cart-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex justify-between items-center border-b pb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Your Shopping Cart</h3>
+                        <button id="close-cart" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="cart-items" class="mt-4 max-h-96 overflow-y-auto">
+                        <!-- Cart items will be added here dynamically -->
+                        <p class="text-gray-500 text-center py-8">Your cart is empty</p>
+                    </div>
+                    
+                    <div class="border-t mt-4 pt-4">
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span id="cart-subtotal" class="font-medium">KSh 0</span>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-gray-600">Delivery:</span>
+                            <span class="font-medium">KSh 200</span>
+                        </div>
+                        <div class="flex justify-between text-lg font-bold">
+                            <span>Total:</span>
+                            <span id="cart-total">KSh 200</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="checkout-btn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-purple-600 text-base font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Proceed to Checkout
+                    </button>
+                    <button type="button" id="continue-shopping" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex justify-between items-center border-b pb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Login to Your Account</h3>
+                        <button id="close-login" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <form>
+                            <div class="mb-4">
+                                <label for="login-email" class="block text-gray-700 mb-2">Email</label>
+                                <input type="email" id="login-email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="login-password" class="block text-gray-700 mb-2">Password</label>
+                                <input type="password" id="login-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                            </div>
+                            
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center">
+                                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                                    <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
+                                </div>
+                                
+                                <div class="text-sm">
+                                    <a href="#" class="font-medium text-purple-600 hover:text-purple-500">Forgot your password?</a>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                                Login
+                            </button>
+                        </form>
+                        
+                        <div class="mt-4 text-center">
+                            <p class="text-gray-600">Don't have an account? <button id="show-register" class="text-purple-600 hover:text-purple-700 font-medium">Register</button></p>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 grid grid-cols-2 gap-3">
+                                <div>
+                                    <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <i class="fab fa-google mr-2"></i> Google
+                                    </button>
+                                </div>
+                                
+                                <div>
+                                    <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <i class="fab fa-facebook-f mr-2"></i> Facebook
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex justify-between items-center border-b pb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Create an Account</h3>
+                        <button id="close-register" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <form>
+                            <div class="mb-4">
+                                <label for="register-name" class="block text-gray-700 mb-2">Full Name</label>
+                                <input type="text" id="register-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="register-email" class="block text-gray-700 mb-2">Email</label>
+                                <input type="email" id="register-email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="register-password" class="block text-gray-700 mb-2">Password</label>
+                                <input type="password" id="register-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="register-confirm-password" class="block text-gray-700 mb-2">Confirm Password</label>
+                                <input type="password" id="register-confirm-password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                            </div>
+                            
+                            <div class="flex items-center mb-4">
+                                <input id="terms" name="terms" type="checkbox" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                                <label for="terms" class="ml-2 block text-sm text-gray-900">I agree to the <a href="#" class="text-purple-600 hover:text-purple-500">Terms of Service</a> and <a href="#" class="text-purple-600 hover:text-purple-500">Privacy Policy</a></label>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                                Create Account
+                            </button>
+                        </form>
+                        
+                        <div class="mt-4 text-center">
+                            <p class="text-gray-600">Already have an account? <button id="show-login" class="text-purple-600 hover:text-purple-700 font-medium">Login</button></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex justify-between items-center border-b pb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Checkout</h3>
+                        <button id="close-checkout" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="font-medium mb-4">Shipping Information</h4>
+                                
+                                <div class="mb-4">
+                                    <label for="shipping-name" class="block text-gray-700 mb-2">Full Name</label>
+                                    <input type="text" id="shipping-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="shipping-email" class="block text-gray-700 mb-2">Email</label>
+                                    <input type="email" id="shipping-email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="shipping-phone" class="block text-gray-700 mb-2">Phone Number</label>
+                                    <input type="tel" id="shipping-phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="shipping-address" class="block text-gray-700 mb-2">Address</label>
+                                    <textarea id="shipping-address" rows="3" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"></textarea>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label for="shipping-city" class="block text-gray-700 mb-2">City</label>
+                                    <input type="text" id="shipping-city" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="shipping-country" class="block text-gray-700 mb-2">Country</label>
+                                        <select id="shipping-country" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                            <option>Kenya</option>
+                                            <option>Uganda</option>
+                                            <option>Tanzania</option>
+                                            <option>Rwanda</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="shipping-postal" class="block text-gray-700 mb-2">Postal Code</label>
+                                        <input type="text" id="shipping-postal" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-medium mb-4">Payment Method</h4>
+                                
+                                <div class="space-y-3 mb-4">
+                                    <div class="payment-method">
+                                        <div class="flex items-center">
+                                            <input id="mpesa" name="payment-method" type="radio" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300">
+                                            <label for="mpesa" class="ml-2 block text-sm text-gray-900">
+                                                <div class="flex items-center">
+                                                    <i class="fab fa-cc-m-pesa text-2xl mr-2"></i>
+                                                    M-Pesa
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="payment-method">
+                                        <div class="flex items-center">
+                                            <input id="card" name="payment-method" type="radio" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300">
+                                            <label for="card" class="ml-2 block text-sm text-gray-900">
+                                                <div class="flex items-center">
+                                                    <i class="fab fa-cc-visa text-2xl mr-2"></i>
+                                                    <i class="fab fa-cc-mastercard text-2xl mr-2"></i>
+                                                    Credit/Debit Card
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="payment-method">
+                                        <div class="flex items-center">
+                                            <input id="paypal" name="payment-method" type="radio" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300">
+                                            <label for="paypal" class="ml-2 block text-sm text-gray-900">
+                                                <div class="flex items-center">
+                                                    <i class="fab fa-cc-paypal text-2xl mr-2"></i>
+                                                    PayPal
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="payment-method">
+                                        <div class="flex items-center">
+                                            <input id="cash" name="payment-method" type="radio" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300">
+                                            <label for="cash" class="ml-2 block text-sm text-gray-900">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-money-bill-wave text-2xl mr-2"></i>
+                                                    Cash on Delivery
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="card-details" class="hidden mb-4">
+                                    <div class="mb-4">
+                                        <label for="card-number" class="block text-gray-700 mb-2">Card Number</label>
+                                        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="card-expiry" class="block text-gray-700 mb-2">Expiry Date</label>
+                                            <input type="text" id="card-expiry" placeholder="MM/YY" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                        </div>
+                                        <div>
+                                            <label for="card-cvv" class="block text-gray-700 mb-2">CVV</label>
+                                            <input type="text" id="card-cvv" placeholder="123" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div id="mpesa-details" class="hidden mb-4">
+                                    <p class="text-sm text-gray-600 mb-2">You will receive an M-Pesa prompt on your phone to complete the payment.</p>
+                                    <div class="mb-4">
+                                        <label for="mpesa-phone" class="block text-gray-700 mb-2">M-Pesa Phone Number</label>
+                                        <input type="tel" id="mpesa-phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                    </div>
+                                </div>
+                                
+                                <div class="border-t pt-4">
+                                    <h4 class="font-medium mb-4">Order Summary</h4>
+                                    
+                                    <div class="space-y-2 mb-4">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Subtotal (3 items)</span>
+                                            <span class="font-medium">KSh 4,500</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Delivery</span>
+                                            <span class="font-medium">KSh 200</span>
+                                        </div>
+                                        <div class="flex justify-between text-lg font-bold">
+                                            <span>Total</span>
+                                            <span>KSh 4,700</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition">
+                                        Place Order
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-check text-green-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">Order Confirmed!</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">Your order #TC20230045 has been placed successfully.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" id="view-order" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-purple-600 text-base font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        View Order Details
+                    </button>
+                    <button type="button" id="close-confirmation" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Tracking Modal -->
+    <div id="tracking-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex justify-between items-center border-b pb-4">
+                        <h3 class="text-lg font-medium text-gray-900">Order #TC20230045</h3>
+                        <button id="close-tracking" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-4">Order Status</h4>
+                            
+                            <div class="tracking-progress">
+                                <div class="tracking-progress-bar" style="width: 75%"></div>
+                            </div>
+                            
+                            <div class="tracking-steps">
+                                <div class="tracking-step completed">
+                                    <div class="tracking-dot completed"></div>
+                                    <div>Order Placed</div>
+                                </div>
+                                <div class="tracking-step completed">
+                                    <div class="tracking-dot completed"></div>
+                                    <div>Processing</div>
+                                </div>
+                                <div class="tracking-step active">
+                                    <div class="tracking-dot active"></div>
+                                    <div>Shipped</div>
+                                </div>
+                                <div class="tracking-step">
+                                    <div class="tracking-dot"></div>
+                                    <div>Delivered</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h4 class="font-medium mb-4">Order Details</h4>
+                            
+                            <div class="space-y-4">
+                                <div class="flex justify-between">
+                                    <span class="text-gray
+</html>
