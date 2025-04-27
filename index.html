@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JP's Thrift - Affordable Fashion for Kenyans</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .category-btn.active {
+            background-color: #4F46E5;
+            color: white;
+        }
+        .cart-notification {
+            animation: slideIn 0.5s forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .rating-star {
+            color: #E4E4E4;
+            cursor: pointer;
+        }
+        .rating-star.active {
+            color: #F59E0B;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Login/Signup Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold" id="authModalTitle">Login</h2>
+                <button onclick="closeAuthModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2" for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button onclick="login()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition mb-4">Login</button>
+                <p class="text-center text-gray-600">Don't have an account? <button onclick="showSignup()" class="text-indigo-600 hover:underline">Sign up</button></p>
+            </div>
+            
+            <div id="signupForm" class="hidden">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="signupName">Full Name</label>
+                    <input type="text" id="signupName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="signupPhone">Phone Number</label>
+                    <input type="tel" id="signupPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 mb-2" for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button onclick="signup()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition mb-4">Sign Up</button>
+                <p class="text-center text-gray-600">Already have an account? <button onclick="showLogin()" class="text-indigo-600 hover:underline">Login</button></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Tracking Modal -->
+    <div id="trackingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Track Your Order</h2>
+                <button onclick="closeTrackingModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="trackingInfo">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="trackingNumber">Order Number</label>
+                    <input type="text" id="trackingNumber" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <button onclick="trackOrder()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition mb-4">Track Order</button>
+                
+                <div id="trackingResult" class="hidden mt-4 p-4 bg-gray-100 rounded-lg">
+                    <h3 class="font-bold mb-2">Order Status</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white mr-3">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Order Placed</p>
+                                <p class="text-sm text-gray-500">Today, 10:30 AM</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white mr-3">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Processing</p>
+                                <p class="text-sm text-gray-500">Today, 11:45 AM</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white mr-3">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">On the Way</p>
+                                <p class="text-sm text-gray-500">Expected by 3:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white mr-3">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Delivered</p>
+                                <p class="text-sm text-gray-500">Not yet delivered</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Rate Your Experience</h2>
+                <button onclick="closeRatingModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mb-6">
+                <p class="mb-4">How would you rate your shopping experience with JP's Thrift?</p>
+                <div class="flex justify-center space-x-2 mb-4" id="ratingStars">
+                    <i class="fas fa-star text-2xl rating-star" data-rating="1"></i>
+                    <i class="fas fa-star text-2xl rating-star" data-rating="2"></i>
+                    <i class="fas fa-star text-2xl rating-star" data-rating="3"></i>
+                    <i class="fas fa-star text-2xl rating-star" data-rating="4"></i>
+                    <i class="fas fa-star text-2xl rating-star" data-rating="5"></i>
+                </div>
+                <input type="hidden" id="selectedRating" value="0">
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-700 mb-2" for="ratingComment">Comments (optional)</label>
+                <textarea id="ratingComment" rows="3" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            </div>
+            
+            <button onclick="submitRating()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">Submit Rating</button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg p-8 w-full max-w-md">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Checkout</h2>
+                <button onclick="closeCheckoutModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="font-bold mb-2">Delivery Address</h3>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="deliveryAddress">Full Address</label>
+                    <textarea id="deliveryAddress" rows="2" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="deliveryNotes">Delivery Notes (optional)</label>
+                    <textarea id="deliveryNotes" rows="2" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., Call when you arrive"></textarea>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="font-bold mb-2">Payment Method</h3>
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <input type="radio" id="mpesaPayment" name="paymentMethod" value="mpesa" checked class="mr-2">
+                        <label for="mpesaPayment" class="flex items-center">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/M-PESA_LOGO-01.svg" alt="M-Pesa" class="h-8 mr-2">
+                            M-Pesa
+                        </label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="radio" id="cardPayment" name="paymentMethod" value="card" class="mr-2">
+                        <label for="cardPayment" class="flex items-center">
+                            <i class="fas fa-credit-card text-xl mr-2"></i>
+                            Credit/Debit Card
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="mpesaPaymentDetails">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="mpesaNumber">M-Pesa Phone Number</label>
+                    <input type="tel" id="mpesaNumber" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., 254712345678">
+                </div>
+                <p class="text-sm text-gray-600 mb-4">You will receive a payment request on your phone to complete the transaction.</p>
+            </div>
+            
+            <div id="cardPaymentDetails" class="hidden">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="1234 5678 9012 3456">
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="cardExpiry">Expiry Date</label>
+                        <input type="text" id="cardExpiry" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="MM/YY">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2" for="cardCvv">CVV</label>
+                        <input type="text" id="cardCvv" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="123">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2" for="cardName">Name on Card</label>
+                    <input type="text" id="cardName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+            
+            <div class="border-t pt-4 mb-6">
+                <div class="flex justify-between mb-2">
+                    <span>Subtotal</span>
+                    <span id="checkoutSubtotal">KSh 0</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span>Delivery Fee</span>
+                    <span>KSh 200</span>
+                </div>
+                <div class="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span id="checkoutTotal">KSh 200</span>
+                </div>
+            </div>
+            
+            <button onclick="placeOrder()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">Place Order</button>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cartSidebar" class="fixed right-0 top-0 h-full w-80 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-40">
+        <div class="p-4 border-b flex justify-between items-center">
+            <h2 class="text-xl font-bold">Your Cart</h2>
+            <button onclick="closeCart()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="p-4 overflow-y-auto h-3/4" id="cartItemsContainer">
+            <p class="text-gray-500 text-center py-8">Your cart is empty</p>
+        </div>
+        
+        <div class="absolute bottom-0 left-0 right-0 p-4 border-t bg-white">
+            <div class="flex justify-between mb-4">
+                <span class="font-medium">Subtotal</span>
+                <span id="cartSubtotal">KSh 0</span>
+            </div>
+            <button onclick="openCheckout()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition">Checkout</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="bg-indigo-800 text-white">
+        <div class="container mx-auto px-4 py-2">
+            <div class="flex justify-between items-center">
+                <p>Free delivery for orders over KSh 2,000 in Nairobi</p>
+                <div class="flex space-x-4">
+                    <button onclick="openTrackingModal()" class="hover:underline">Track Order</button>
+                    <button onclick="openAuthModal('login')" id="loginBtn" class="hover:underline">Login</button>
+                    <button onclick="openAuthModal('signup')" id="signupBtn" class="hover:underline">Sign Up</button>
+                    <span id="userGreeting" class="hidden"></span>
+                    <button onclick="logout()" id="logoutBtn" class="hidden hover:underline">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <h1 class="text-3xl font-bold text-indigo-600">JP's Thrift</h1>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="font-medium hover:text-indigo-600">Home</a>
+                    <a href="#" class="hover:text-indigo-600">Men</a>
+                    <a href="#" class="hover:text-indigo-600">Women</a>
+                    <a href="#" class="hover:text-indigo-600">Kids</a>
+                    <a href="#" class="hover:text-indigo-600">Accessories</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="relative">
+                        <i class="fas fa-search text-xl"></i>
+                    </button>
+                    <button onclick="openCart()" class="relative">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cartCount" class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    </button>
+                    <button class="md:hidden">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white mb-12">
+            <div class="max-w-2xl">
+                <h2 class="text-4xl font-bold mb-4">Affordable Fashion for Everybody ☺️</h2>
+                <p class="text-xl mb-6">Discover quality second-hand clothes at unbeatable prices. Free delivery in Nairobi for orders over KSh 2,000.</p>
+                <button class="bg-white text-indigo-600 font-medium py-2 px-6 rounded-lg hover:bg-gray-100 transition">Shop Now</button>
+            </div>
+        </section>
+
+        <!-- Categories -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">Shop by Category</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button onclick="filterCategory('all')" class="category-btn active bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <div class="bg-indigo-100 rounded-full p-3 inline-block mb-2">
+                        <i class="fas fa-tshirt text-indigo-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium">All Items</h3>
+                </button>
+                <button onclick="filterCategory('men')" class="category-btn bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <div class="bg-blue-100 rounded-full p-3 inline-block mb-2">
+                        <i class="fas fa-male text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium">Men's Wear</h3>
+                </button>
+                <button onclick="filterCategory('women')" class="category-btn bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <div class="bg-pink-100 rounded-full p-3 inline-block mb-2">
+                        <i class="fas fa-female text-pink-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium">Women's Wear</h3>
+                </button>
+                <button onclick="filterCategory('kids')" class="category-btn bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <div class="bg-yellow-100 rounded-full p-3 inline-block mb-2">
+                        <i class="fas fa-child text-yellow-600 text-2xl"></i>
+                    </div>
+                    <h3 class="font-medium">Kids' Wear</h3>
+                </button>
+            </div>
+        </section>
+
+        <!-- Products -->
+        <section class="mb-12">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Featured Items</h2>
+                <div class="flex space-x-2">
+                    <button class="px-3 py-1 border rounded-lg hover:bg-gray-100">New Arrivals</button>
+                    <button class="px-3 py-1 border rounded-lg hover:bg-gray-100">Best Sellers</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="productsContainer">
+                <!-- Product items will be added here by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6">What Our Customers Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Customer" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <h3 class="font-medium">Wanjiru M.</h3>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"I've bought several dresses from JP's Thrift and they're all in excellent condition. The delivery was fast and the prices are unbeatable!"</p>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Customer" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <h3 class="font-medium">Kamau K.</h3>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"The quality of the shirts I bought exceeded my expectations. The M-Pesa payment was seamless and delivery was right on time."</p>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Customer" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <h3 class="font-medium">Auma S.</h3>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"I love shopping at JP's Thrift for my kids' clothes. They have a great selection and the prices are very affordable for the quality you get."</p>
+                </div>
+                
+                <!-- Testimonial 4 -->
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Customer" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <h3 class="font-medium">Omondi P.</h3>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"The jeans I ordered fit perfectly and looked brand new. The checkout process was smooth and I received SMS updates about my order."</p>
+                </div>
+                
+                <!-- Testimonial 5 -->
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/85.jpg" alt="Customer" class="w-12 h-12 rounded-full object-cover mr-4">
+                        <div>
+                            <h3 class="font-medium">Njeri W.</h3>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"I was able to find designer bags at a fraction of the price. The authentication process gave me confidence in my purchase."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter -->
+        <section class="bg-indigo-50 rounded-xl p-8 mb-12">
+            <div class="max-w-2xl mx-auto text-center">
+                <h2 class="text-2xl font-bold mb-2">Stay Updated</h2>
+                <p class="text-gray-600 mb-6">Subscribe to our newsletter for exclusive deals and new arrivals</p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input type="email" placeholder="Your email address" class="flex-grow px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button class="bg-indigo-600 text-white font-medium py-2 px-6 rounded-lg hover:bg-indigo-700 transition">Subscribe</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">JP's Thrift</h3>
+                    <p class="text-gray-400">Affordable fashion for every Kenyan. Quality second-hand clothes at unbeatable prices.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Shop</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Men's Wear</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Women's Wear</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Kids' Wear</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Accessories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Help</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQs</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Shipping & Returns</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Size Guide</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Connect With Us</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-400">Email: info@jpsthrift.co.ke</p>
+                    <p class="text-gray-400">Phone: +254 700 123456</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 JP's Thrift. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Notification -->
+    <div id="cartNotification" class="fixed bottom-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg hidden cart-notification z-50">
+        Item added to cart!
+    </div>
+
+    <script>
+        // Sample product data
+        const products = [
+            {
+                id: 1,
+                name: "Men's Casual Shirt",
+                price: 850,
+                category: "men",
+                sizes: ["S", "M", "L", "XL"],
+                image: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Comfortable casual shirt perfect for everyday wear."
+            },
+            {
+                id: 2,
+                name: "Women's Floral Dress",
+                price: 1200,
+                category: "women",
+                sizes: ["S", "M", "L"],
+                image: "https://images.unsplash.com/photo-1539008835657-9e8e9680e956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Beautiful floral dress for any occasion."
+            },
+            {
+                id: 3,
+                name: "Kids' Denim Jacket",
+                price: 700,
+                category: "kids",
+                sizes: ["4-5", "6-7", "8-9"],
+                image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Stylish denim jacket for kids."
+            },
+            {
+                id: 4,
+                name: "Men's Slim Fit Jeans",
+                price: 950,
+                category: "men",
+                sizes: ["28", "30", "32", "34"],
+                image: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Classic slim fit jeans for men."
+            },
+            {
+                id: 5,
+                name: "Women's High Waist Jeans",
+                price: 1100,
+                category: "women",
+                sizes: ["26", "28", "30", "32"],
+                image: "https://images.unsplash.com/photo-1542272604-787c3835535d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Trendy high waist jeans for women."
+            },
+            {
+                id: 6,
+                name: "Kids' Graphic T-Shirt",
+                price: 450,
+                category: "kids",
+                sizes: ["4-5", "6-7", "8-9"],
+                image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Fun graphic t-shirt for kids."
+            },
+            {
+                id: 7,
+                name: "Men's Polo Shirt",
+                price: 750,
+                category: "men",
+                sizes: ["S", "M", "L", "XL"],
+                image: "https://images.unsplash.com/photo-1527719327859-c6ce80353573?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Classic polo shirt for men."
+            },
+            {
+                id: 8,
+                name: "Women's Blouse",
+                price: 900,
+                category: "women",
+                sizes: ["S", "M", "L"],
+                image: "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+                description: "Elegant blouse for women."
+            }
+        ];
+
+        // Cart functionality
+        let cart = [];
+        let currentUser = null;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProducts(products);
+            checkLoginStatus();
+            
+            // Add event listeners for payment method toggle
+            document.getElementById('mpesaPayment').addEventListener('change', function() {
+                document.getElementById('mpesaPaymentDetails').classList.remove('hidden');
+                document.getElementById('cardPaymentDetails').classList.add('hidden');
+            });
+            
+            document.getElementById('cardPayment').addEventListener('change', function() {
+                document.getElementById('mpesaPaymentDetails').classList.add('hidden');
+                document.getElementById('cardPaymentDetails').classList.remove('hidden');
+            });
+            
+            // Add event listeners for rating stars
+            const stars = document.querySelectorAll('.rating-star');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    document.getElementById('selectedRating').value = rating;
+                    
+                    // Update star display
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+            });
+        });
+
+        // Render products to the page
+        function renderProducts(productsToRender) {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '';
+            
+            productsToRender.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition';
+                productElement.innerHTML = `
+                    <div class="relative">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover">
+                        <div class="absolute top-2 right-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded">KSh ${product.price}</div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium mb-1">${product.name}</h3>
+                        <p class="text-gray-600 text-sm mb-3">${product.description}</p>
+                        <div class="flex justify-between items-center">
+                            <select id="size-${product.id}" class="border rounded px-2 py-1 text-sm">
+                                ${product.sizes.map(size => `<option value="${size}">${size}</option>`).join('')}
+                            </select>
+                            <button onclick="addToCart(${product.id})" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition">Add to Cart</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(productElement);
+            });
+        }
+
+        // Filter products by category
+        function filterCategory(category) {
+            // Update active category button
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (category === 'all') {
+                renderProducts(products);
+            } else {
+                const filteredProducts = products.filter(product => product.category === category);
+                renderProducts(filteredProducts);
+            }
+        }
+
+        // Add item to cart
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const sizeSelect = document.getElementById(`size-${productId}`);
+            const selectedSize = sizeSelect.value;
+            
+            // Check if item already exists in cart with same size
+            const existingItemIndex = cart.findIndex(item => item.id === productId && item.size === selectedSize);
+            
+            if (existingItemIndex !== -1) {
+                cart[existingItemIndex].quantity += 1;
+            } else {
+                cart.push({
+                    ...product,
+                    size: selectedSize,
+                    quantity: 1
+                });
+            }
+            
+            updateCartUI();
+            showCartNotification();
+        }
+
+        // Update cart UI
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cartItemsContainer');
+            const cartCount = document.getElementById('cartCount');
+            const cartSubtotal = document.getElementById('cartSubtotal');
+            const checkoutSubtotal = document.getElementById('checkoutSubtotal');
+            const checkoutTotal = document.getElementById('checkoutTotal');
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Your cart is empty</p>';
+                cartCount.classList.add('hidden');
+            } else {
+                cartItemsContainer.innerHTML = '';
+                let subtotal = 0;
+                
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'flex items-center mb-4 pb-4 border-b';
+                    cartItem.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded mr-4">
+                        <div class="flex-grow">
+                            <h4 class="font-medium">${item.name}</h4>
+                            <p class="text-sm text-gray-600">Size: ${item.size}</p>
+                            <div class="flex items-center mt-1">
+                                <button onclick="updateQuantity(${item.id}, '${item.size}', -1)" class="w-6 h-6 border rounded flex items-center justify-center">-</button>
+                                <span class="mx-2">${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, '${item.size}', 1)" class="w-6 h-6 border rounded flex items-center justify-center">+</button>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-medium">KSh ${itemTotal}</p>
+                            <button onclick="removeFromCart(${item.id}, '${item.size}')" class="text-red-500 text-sm mt-1">Remove</button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItem);
+                });
+                
+                cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+                cartCount.classList.remove('hidden');
+                
+                cartSubtotal.textContent = `KSh ${subtotal}`;
+                checkoutSubtotal.textContent = `KSh ${subtotal}`;
+                checkoutTotal.textContent = `KSh ${subtotal + 200}`; // Adding delivery fee
+            }
+        }
+
+        // Update item quantity in cart
+        function updateQuantity(productId, size, change) {
+            const itemIndex = cart.findIndex(item => item.id === productId && item.size === size);
+            
+            if (itemIndex !== -1) {
+                cart[itemIndex].quantity += change;
+                
+                if (cart[itemIndex].quantity <= 0) {
+                    cart.splice(itemIndex, 1);
+                }
+                
+                updateCartUI();
+            }
+        }
+
+        // Remove item from cart
+        function removeFromCart(productId, size) {
+            cart = cart.filter(item => !(item.id === productId && item.size === size));
+            updateCartUI();
+        }
+
+        // Show cart notification
+        function showCartNotification() {
+            const notification = document.getElementById('cartNotification');
+            notification.classList.remove('hidden');
+            
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Open cart sidebar
+        function openCart() {
+            document.getElementById('cartSidebar').classList.remove('translate-x-full');
+            updateCartUI();
+        }
+
+        // Close cart sidebar
+        function closeCart() {
+            document.getElementById('cartSidebar').classList.add('translate-x-full');
+        }
+
+        // Open checkout modal
+        function openCheckout() {
+            if (cart.length === 0) return;
+            
+            if (!currentUser) {
+                openAuthModal('login');
+                return;
+            }
+            
+            document.getElementById('checkoutModal').classList.remove('hidden');
+            document.getElementById('deliveryAddress').value = currentUser.address || '';
+        }
+
+        // Close checkout modal
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        // Place order
+        function placeOrder() {
+            const address = document.getElementById('deliveryAddress').value;
+            const notes = document.getElementById('deliveryNotes').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            
+            if (!address) {
+                alert('Please enter your delivery address');
+                return;
+            }
+            
+            // In a real app, you would process the payment here
+            if (paymentMethod === 'mpesa') {
+                const phone = document.getElementById('mpesaNumber').value;
+                if (!phone) {
+                    alert('Please enter your M-Pesa phone number');
+                    return;
+                }
+                // Process M-Pesa payment
+                alert(`M-Pesa payment request sent to ${phone}. Please complete the payment on your phone.`);
+            } else {
+                const cardNumber = document.getElementById('cardNumber').value;
+                const cardExpiry = document.getElementById('cardExpiry').value;
+                const cardCvv = document.getElementById('cardCvv').value;
+                const cardName = document.getElementById('cardName').value;
+                
+                if (!cardNumber || !cardExpiry || !cardCvv || !cardName) {
+                    alert('Please complete all card details');
+                    return;
+                }
+                // Process card payment
+                alert('Card payment processed successfully');
+            }
+            
+            // Generate order number
+            const orderNumber = 'JP' + Date.now().toString().slice(-6);
+            
+            // In a real app, you would save the order to a database here
+            alert(`Order #${orderNumber} placed successfully! You will receive an SMS with tracking information.`);
+            
+            // Clear cart
+            cart = [];
+            updateCartUI();
+            closeCheckoutModal();
+            
+            // Show rating modal after a delay (simulating delivery)
+            setTimeout(() => {
+                openRatingModal();
+            }, 5000);
+        }
+
+        // Open auth modal
+        function openAuthModal(type) {
+            document.getElementById('authModal').classList.remove('hidden');
+            
+            if (type === 'login') {
+                showLogin();
+            } else {
+                showSignup();
+            }
+        }
+
+        // Close auth modal
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        // Show login form
+        function showLogin() {
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('authModalTitle').textContent = 'Login';
+        }
+
+        // Show signup form
+        function showSignup() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('signupForm').classList.remove('hidden');
+            document.getElementById('authModalTitle').textContent = 'Sign Up';
+        }
+
+        // Login function
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('Please enter both email and password');
+                return;
+            }
+            
+            // In a real app, you would validate credentials with a backend
+            currentUser = {
+                name: 'Test User',
+                email: email,
+                address: '123 Test Street, Nairobi'
+            };
+            
+            checkLoginStatus();
+            closeAuthModal();
+            alert('Login successful!');
+        }
+
+        // Signup function
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const phone = document.getElementById('signupPhone').value;
+            const password = document.getElementById('signupPassword').value;
+            
+            if (!name || !email || !phone || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // In a real app, you would send this data to a backend
+            currentUser = {
+                name: name,
+                email: email,
+                phone: phone,
+                address: ''
+            };
+            
+            checkLoginStatus();
+            closeAuthModal();
+            alert('Account created successfully!');
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            checkLoginStatus();
+        }
+
+        // Check login status and update UI
+        function checkLoginStatus() {
+            const loginBtn = document.getElementById('loginBtn');
+            const signupBtn = document.getElementById('signupBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userGreeting = document.getElementById('userGreeting');
+            
+            if (currentUser) {
+                loginBtn.classList.add('hidden');
+                signupBtn.classList.add('hidden');
+                logoutBtn.classList.remove('hidden');
+                userGreeting.classList.remove('hidden');
+                userGreeting.textContent = `Hi, ${currentUser.name.split(' ')[0]}`;
+            } else {
+                loginBtn.classList.remove('hidden');
+                signupBtn.classList.remove('hidden');
+                logoutBtn.classList.add('hidden');
+                userGreeting.classList.add('hidden');
+            }
+        }
+
+        // Open tracking modal
+        function openTrackingModal() {
+            document.getElementById('trackingModal').classList.remove('hidden');
+        }
+
+        // Close tracking modal
+        function closeTrackingModal() {
+            document.getElementById('trackingModal').classList.add('hidden');
+            document.getElementById('trackingResult').classList.add('hidden');
+        }
+
+        // Track order
+        function trackOrder() {
+            const orderNumber = document.getElementById('trackingNumber').value;
+            
+            if (!orderNumber) {
+                alert('Please enter your order number');
+                return;
+            }
+            
+            // In a real app, you would fetch tracking info from a backend
+            document.getElementById('trackingResult').classList.remove('hidden');
+        }
+
+        // Open rating modal
+        function openRatingModal() {
+            document.getElementById('ratingModal').classList.remove('hidden');
+        }
+
+        // Close rating modal
+        function closeRatingModal() {
+            document.getElementById('ratingModal').classList.add('hidden');
+        }
+
+        // Submit rating
+        function submitRating() {
+            const rating = document.getElementById('selectedRating').value;
+            const comment = document.getElementById('ratingComment').value;
+            
+            if (rating === '0') {
+                alert('Please select a rating');
+                return;
+            }
+            
+            // In a real app, you would send this to a backend
+            alert(`Thank you for your ${rating}-star rating!`);
+            closeRatingModal();
+        }
+    </script>
+</body>
+</html>
