@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threads & Finds | Vintage & Thrift Clothing Delivery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-bg {
+            background-image: url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+        }
+        .form-bg {
+            background-image: url('https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .form-overlay {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        .cart-item:hover {
+            background-color: rgba(249, 250, 251, 0.7);
+        }
+    </style>
+</head>
+<body class="font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md fixed w-full z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="text-xl font-bold text-gray-800">Threads & Finds</a>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-800 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Home</a>
+                    <a href="#shop" class="text-gray-800 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Shop</a>
+                    <a href="#about" class="text-gray-800 hover:text-indigo-600 px-3 py-2 text-sm font-medium">About</a>
+                    <a href="#reviews" class="text-gray-800 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Reviews</a>
+                    <div class="relative" id="auth-buttons">
+                        <button onclick="toggleAuthDropdown()" class="flex items-center text-gray-800 hover:text-indigo-600">
+                            <i class="fas fa-user-circle mr-1"></i> Account
+                        </button>
+                        <div id="auth-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
+                            <a href="#" onclick="showLoginForm()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">Login</a>
+                            <a href="#" onclick="showSignupForm()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">Sign Up</a>
+                        </div>
+                    </div>
+                    <button onclick="toggleCart()" class="relative text-gray-800 hover:text-indigo-600">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                    </button>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-gray-800 hover:text-indigo-600">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#home" class="block px-3 py-2 text-base font-medium text-gray-800 hover:text-indigo-600">Home</a>
+                <a href="#shop" class="block px-3 py-2 text-base font-medium text-gray-800 hover:text-indigo-600">Shop</a>
+                <a href="#about" class="block px-3 py-2 text-base font-medium text-gray-800 hover:text-indigo-600">About</a>
+                <a href="#reviews" class="block px-3 py-2 text-base font-medium text-gray-800 hover:text-indigo-600">Reviews</a>
+                <div class="pt-4 pb-2 border-t border-gray-200">
+                    <div class="flex items-center px-5">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-user-circle text-gray-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <div class="text-base font-medium text-gray-800">Guest</div>
+                        </div>
+                    </div>
+                    <div class="mt-3 space-y-1">
+                        <a href="#" onclick="showLoginForm()" class="block px-3 py-2 text-base font-medium text-gray-800 hover:text-indigo-600">Login</a>
+                        <a href="#" onclick="showSignupForm()" class="block px-3 py-2 text-base font-medium text-gray-800 hover:text-indigo-600">Sign Up</a>
+                    </div>
+                </div>
+                <button onclick="toggleCart()" class="w-full flex items-center px-3 py-2 text-base font-medium text-gray-800 hover:text-indigo-600">
+                    <i class="fas fa-shopping-cart mr-2"></i> Cart
+                    <span id="mobile-cart-count" class="ml-auto bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-bg pt-16 flex items-center justify-center">
+        <div class="text-center px-4">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">Discover Unique Vintage Finds</h1>
+            <p class="text-xl md:text-2xl text-white mb-8">Curated thrift clothing delivered to your doorstep</p>
+            <a href="#shop" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-full text-lg transition duration-300">Shop Now</a>
+        </div>
+    </section>
+
+    <!-- Shop Section -->
+    <section id="shop" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">Our Collection</h2>
+            
+            <!-- Filters -->
+            <div class="flex flex-wrap justify-between mb-8">
+                <div class="w-full md:w-auto mb-4 md:mb-0">
+                    <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select id="category" onchange="filterItems()" class="block w-full md:w-48 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="all">All Categories</option>
+                        <option value="tops">Tops</option>
+                        <option value="bottoms">Bottoms</option>
+                        <option value="dresses">Dresses</option>
+                        <option value="outerwear">Outerwear</option>
+                        <option value="accessories">Accessories</option>
+                    </select>
+                </div>
+                <div class="w-full md:w-auto mb-4 md:mb-0">
+                    <label for="size" class="block text-sm font-medium text-gray-700 mb-1">Size</label>
+                    <select id="size" onchange="filterItems()" class="block w-full md:w-48 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="all">All Sizes</option>
+                        <option value="XS">XS</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </div>
+                <div class="w-full md:w-auto">
+                    <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                    <select id="price" onchange="filterItems()" class="block w-full md:w-48 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="all">All Prices</option>
+                        <option value="0-20">Under $20</option>
+                        <option value="20-40">$20 - $40</option>
+                        <option value="40-60">$40 - $60</option>
+                        <option value="60+">Over $60</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Items Grid -->
+            <div id="items-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Items will be loaded here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
+                <div class="mb-12 lg:mb-0">
+                    <h2 class="text-3xl font-bold mb-6">Our Story</h2>
+                    <p class="text-gray-600 mb-4">Threads & Finds was born from a passion for sustainable fashion and the thrill of discovering unique vintage pieces. We believe that great style doesn't have to come at the expense of our planet.</p>
+                    <p class="text-gray-600 mb-4">Our team scours thrift stores, estate sales, and vintage markets to bring you carefully curated clothing with character and history. Each piece is inspected, cleaned, and photographed with care.</p>
+                    <p class="text-gray-600">By choosing secondhand, you're not just getting unique fashion - you're reducing textile waste and supporting a more sustainable future for fashion.</p>
+                </div>
+                <div class="rounded-lg overflow-hidden shadow-lg">
+                    <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Our team sorting clothes" class="w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="reviews" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Review 1 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/32.jpg" alt="Sarah J.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Sarah J.</p>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"I found the most amazing vintage denim jacket! The quality is incredible and it arrived perfectly cleaned and packaged. Will definitely shop here again!"</p>
+                </div>
+                
+                <!-- Review 2 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/54.jpg" alt="Michael T.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Michael T.</p>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"The delivery was super fast and the 90s band tee I got is in perfect condition. Love that I can find unique pieces while being eco-friendly!"</p>
+                </div>
+                
+                <!-- Review 3 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Aisha K.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">Aisha K.</p>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star-half-alt text-yellow-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"Great selection of vintage dresses! The measurements provided were accurate and the dress fit perfectly. The only reason I'm not giving 5 stars is because I wish they had more plus-size options."</p>
+                </div>
+                
+                <!-- Review 4 -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <img class="h-10 w-10 rounded-full" src="https://randomuser.me/api/portraits/men/32.jpg" alt="David L.">
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-gray-900">David L.</p>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                                <i class="fas fa-star text-yellow-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600">"The leather jacket I purchased looks even better in person than in the photos. Customer service was excellent when I had questions about care instructions. Highly recommend!"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="form-bg bg-cover bg-center">
+                    <div class="form-overlay p-6">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-6">Login to Your Account</h3>
+                            <button onclick="hideLoginForm()" class="text-gray-400 hover:text-gray-500">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form id="login-form" class="space-y-6">
+                            <div>
+                                <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" id="login-email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                                <input type="password" id="login-password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                                </div>
+                                <div class="text-sm">
+                                    <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
+                                </div>
+                            </div>
+                            <div>
+                                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Login</button>
+                            </div>
+                        </form>
+                        <div class="mt-6">
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 grid grid-cols-2 gap-3">
+                                <div>
+                                    <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <i class="fab fa-google text-red-500"></i>
+                                        <span class="ml-2">Google</span>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <i class="fab fa-facebook-f text-blue-600"></i>
+                                        <span class="ml-2">Facebook</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <p class="text-sm text-gray-600">
+                                Don't have an account? 
+                                <a href="#" onclick="showSignupForm()" class="font-medium text-indigo-600 hover:text-indigo-500">Sign up</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="form-bg bg-cover bg-center">
+                    <div class="form-overlay p-6">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-6">Create Your Account</h3>
+                            <button onclick="hideSignupForm()" class="text-gray-400 hover:text-gray-500">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form id="signup-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="signup-firstname" class="block text-sm font-medium text-gray-700">First Name</label>
+                                    <input type="text" id="signup-firstname" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="signup-lastname" class="block text-sm font-medium text-gray-700">Last Name</label>
+                                    <input type="text" id="signup-lastname" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="signup-email" class="block text-sm font-medium text-gray-700">Email</label>
+                                <input type="email" id="signup-email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+                                <input type="password" id="signup-password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                                <input type="password" id="signup-confirm-password" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div class="flex items-center">
+                                <input id="terms" name="terms" type="checkbox" required class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                <label for="terms" class="ml-2 block text-sm text-gray-700">
+                                    I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500">Terms</a> and <a href="#" class="text-indigo-600 hover:text-indigo-500">Privacy Policy</a>
+                                </label>
+                            </div>
+                            <div>
+                                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Sign Up</button>
+                            </div>
+                        </form>
+                        <div class="mt-6">
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-2 bg-white text-gray-500">Or sign up with</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 grid grid-cols-2 gap-3">
+                                <div>
+                                    <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <i class="fab fa-google text-red-500"></i>
+                                        <span class="ml-2">Google</span>
+                                    </button>
+                                </div>
+                                <div>
+                                    <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                        <i class="fab fa-facebook-f text-blue-600"></i>
+                                        <span class="ml-2">Facebook</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center">
+                            <p class="text-sm text-gray-600">
+                                Already have an account? 
+                                <a href="#" onclick="showLoginForm()" class="font-medium text-indigo-600 hover:text-indigo-500">Login</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 z-50 w-full md:w-96 bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="flex flex-col h-full">
+            <div class="flex items-center justify-between p-4 border-b">
+                <h3 class="text-lg font-medium">Your Shopping Cart</h3>
+                <button onclick="toggleCart()" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="cart-items" class="flex-1 overflow-y-auto p-4">
+                <!-- Cart items will be loaded here by JavaScript -->
+                <div id="empty-cart-message" class="text-center py-12">
+                    <i class="fas fa-shopping-cart text-gray-300 text-5xl mb-4"></i>
+                    <p class="text-gray-500">Your cart is empty</p>
+                </div>
+            </div>
+            <div class="border-t p-4">
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-600">Subtotal</span>
+                    <span id="cart-subtotal" class="font-medium">$0.00</span>
+                </div>
+                <div class="flex justify-between mb-4">
+                    <span class="text-gray-600">Shipping</span>
+                    <span id="cart-shipping" class="font-medium">Calculated at checkout</span>
+                </div>
+                <button onclick="checkout()" id="checkout-btn" disabled class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed">
+                    Proceed to Checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Complete Your Purchase</h3>
+                        <button onclick="hideCheckoutModal()" class="text-gray-400 hover:text-gray-500">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Delivery Details -->
+                        <div>
+                            <h4 class="text-lg font-medium mb-4">Delivery Information</h4>
+                            <form id="delivery-form" class="space-y-4">
+                                <div>
+                                    <label for="full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                                    <input type="text" id="full-name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                    <input type="tel" id="phone" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div>
+                                    <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                                    <textarea id="address" rows="3" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                                </div>
+                                <div>
+                                    <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                                    <input type="text" id="city" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="zip-code" class="block text-sm font-medium text-gray-700">ZIP Code</label>
+                                        <input type="text" id="zip-code" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                    </div>
+                                    <div>
+                                        <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+                                        <select id="country" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                            <option value="US">United States</option>
+                                            <option value="CA">Canada</option>
+                                            <option value="UK">United Kingdom</option>
+                                            <option value="KE">Kenya</option>
+                                            <option value="NG">Nigeria</option>
+                                            <option value="ZA">South Africa</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Order Summary -->
+                        <div>
+                            <h4 class="text-lg font-medium mb-4">Order Summary</h4>
+                            <div id="checkout-items" class="mb-4 space-y-3">
+                                <!-- Checkout items will be loaded here by JavaScript -->
+                            </div>
+                            <div class="border-t pt-4 space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Subtotal</span>
+                                    <span id="checkout-subtotal" class="font-medium">$0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Shipping</span>
+                                    <span id="checkout-shipping" class="font-medium">$5.00</span>
+                                </div>
+                                <div class="flex justify-between text-lg font-bold pt-2">
+                                    <span>Total</span>
+                                    <span id="checkout-total" class="text-indigo-600">$0.00</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Payment Methods -->
+                            <div class="mt-6">
+                                <h4 class="text-lg font-medium mb-3">Payment Method</h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center">
+                                        <input id="credit-card" name="payment-method" type="radio" checked class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                        <label for="credit-card" class="ml-3 block text-sm font-medium text-gray-700">
+                                            Credit/Debit Card
+                                        </label>
+                                    </div>
+                                    <div id="card-payment" class="ml-7 space-y-3">
+                                        <div>
+                                            <label for="card-number" class="block text-sm font-medium text-gray-700">Card Number</label>
+                                            <input type="text" id="card-number" placeholder="1234 5678 9012 3456" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label for="expiry-date" class="block text-sm font-medium text-gray-700">Expiry Date</label>
+                                                <input type="text" id="expiry-date" placeholder="MM/YY" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                            </div>
+                                            <div>
+                                                <label for="cvv" class="block text-sm font-medium text-gray-700">CVV</label>
+                                                <input type="text" id="cvv" placeholder="123" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center">
+                                        <input id="mpesa" name="payment-method" type="radio" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+                                        <label for="mpesa" class="ml-3 block text-sm font-medium text-gray-700">
+                                            M-Pesa
+                                        </label>
+                                    </div>
+                                    <div id="mpesa-payment" class="ml-7 hidden">
+                                        <p class="text-sm text-gray-500 mb-2">You'll receive a payment request on your phone</p>
+                                        <div>
+                                            <label for="mpesa-phone" class="block text-sm font-medium text-gray-700">M-Pesa Phone Number</label>
+                                            <input type="tel" id="mpesa-phone" placeholder="07XX XXX XXX" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button onclick="placeOrder()" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded">
+                                Place Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-check text-green-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Order Confirmed!</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500">Thank you for your purchase. Your order #<span id="order-number" class="font-medium">12345</span> has been placed successfully.</p>
+                                <p class="text-sm text-gray-500 mt-2">You'll receive a confirmation email with your order details.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button onclick="hideConfirmationModal()" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Continue Shopping
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Threads & Finds</h3>
+                    <p class="text-gray-300">Curated vintage and thrift clothing delivered to your doorstep.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-300 hover:text-white">Home</a></li>
+                        <li><a href="#shop" class="text-gray-300 hover:text-white">Shop</a></li>
+                        <li><a href="#about" class="text-gray-300 hover:text-white">About Us</a></li>
+                        <li><a href="#reviews" class="text-gray-300 hover:text-white">Reviews</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Customer Service</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">FAQs</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Shipping Policy</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Returns & Exchanges</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Connect With Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-gray-300">Subscribe to our newsletter</p>
+                        <div class="mt-2 flex">
+                            <input type="email" placeholder="Your email" class="px-3 py-2 rounded-l text-gray-800 w-full">
+                            <button class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-r">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 Threads & Finds. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data for items
+        const items = [
+            { id: 1, name: "Vintage Denim Jacket", price: 45.99, category: "outerwear", size: "M", image: "https://images.unsplash.com/photo-1543076449-ae0315e1a1be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80", description: "Classic 90s denim jacket with slight distressing" },
+            { id: 2, name: "Retro Band Tee", price: 24.99, category: "tops", size: "L", image: "https://images.unsplash.com/photo-1527719327859-c6ce80353573?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80", description: "Vintage concert tee from 1985 tour" },
+            { id: 3, name: "High-Waisted Jeans", price: 32.50, category: "bottoms", size: "S", image: "https://images.unsplash.com/photo-1541099649105-f69ad21a3246?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80", description: "Classic 80s high-waisted straight leg jeans" },
+            { id: 4, name: "Floral Sundress", price: 28.75, category: "dresses", size: "XS", image: "https://images.unsplash.com/photo-1533659828870-95ee305ce057?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80", description: "Beautiful 70s inspired floral print dress" },
+            { id: 5, name: "Leather Crossbody Bag", price: 39.99, category: "accessories", size: "OS", image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1976&q=80", description: "Genuine leather bag from the 60s" },
+            { id: 6, name: "Striped Button-Up", price: 22.99, category: "tops", size: "XL", image: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80", description: "Vintage nautical style striped shirt" },
+            { id: 7, name: "Corduroy Pants", price: 29.50, category: "bottoms", size: "M", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1976&q=80", description: "70s style brown corduroy pants" },
+            { id: 8, name: "Knit Sweater", price: 35.25, category: "tops", size: "L", image: "https://images.unsplash.com/photo-1551232864-3f0890e580d9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80", description: "Chunky knit sweater with retro pattern" },
+            { id: 9, name: "Silk Scarf", price: 18.99, category: "accessories", size: "OS", image: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80", description: "Vintage floral silk scarf" },
+            { id: 10, name: "Pleated Skirt", price: 27.99, category: "bottoms", size: "S", image: "https://images.unsplash.com/photo-1551232864-6f6d0f614d32?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80", description: "50s style pleated midi skirt" },
+            { id: 11, name: "Trench Coat", price: 55.00, category: "outerwear", size: "M", image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1976&q=80", description: "Classic beige trench coat" },
+            { id: 12, name: "Graphic Tee", price: 19.99, category: "tops", size: "XL", image: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80", description: "Vintage cartoon graphic tee" }
+        ];
+
+        // Cart functionality
+        let cart = [];
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadItems();
+            setupEventListeners();
+        });
+        
+        function loadItems() {
+            const itemsGrid = document.getElementById('items-grid');
+            itemsGrid.innerHTML = '';
+            
+            items.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'bg-white rounded-lg overflow-hidden shadow-md item-card transition duration-300';
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-64 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">${item.name}</h3>
+                        <p class="text-gray-600 text-sm mb-2">${item.description}</p>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-700">Size: ${item.size}</span>
+                            <span class="font-bold text-indigo-600">$${item.price.toFixed(2)}</span>
+                        </div>
+                        <button onclick="addToCart(${item.id})" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition duration-300">
+                            Add to Cart
+                        </button>
+                    </div>
+                `;
+                itemsGrid.appendChild(itemElement);
+            });
+        }
+        
+        function filterItems() {
+            const category = document.getElementById('category').value;
+            const size = document.getElementById('size').value;
+            const price = document.getElementById('price').value;
+            
+            let filteredItems = items;
+            
+            if (category !== 'all') {
+                filteredItems = filteredItems.filter(item => item.category === category);
+            }
+            
+            if (size !== 'all') {
+                filteredItems = filteredItems.filter(item => item.size === size);
+            }
+            
+            if (price !== 'all') {
+                const [min, max] = price.split('-');
+                if (max) {
+                    filteredItems = filteredItems.filter(item => item.price >= parseFloat(min) && item.price <= parseFloat(max));
+                } else {
+                    filteredItems = filteredItems.filter(item => item.price >= parseFloat(min));
+                }
+            }
+            
+            renderFilteredItems(filteredItems);
+        }
+        
+        function renderFilteredItems(filteredItems) {
+            const itemsGrid = document.getElementById('items-grid');
+            itemsGrid.innerHTML = '';
+            
+            if (filteredItems.length === 0) {
+                itemsGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-12">No items match your filters. Try adjusting your selection.</p>';
+                return;
+            }
+            
+            filteredItems.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'bg-white rounded-lg overflow-hidden shadow-md item-card transition duration-300';
+                itemElement.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}" class="w-full h-64 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-1">${item.name}</h3>
+                        <p class="text-gray-600 text-sm mb-2">${item.description}</p>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-700">Size: ${item.size}</span>
+                            <span class="font-bold text-indigo-600">$${item.price.toFixed(2)}</span>
+                        </div>
+                        <button onclick="addToCart(${item.id})" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded transition duration-300">
+                            Add to Cart
+                        </button>
+                    </div>
+                `;
+                itemsGrid.appendChild(itemElement);
+            });
+        }
+        
+        function addToCart(itemId) {
+            const item = items.find(i => i.id === itemId);
+            const existingItem = cart.find(i => i.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+            
+            updateCart();
+            showCartNotification();
+        }
+        
+        function updateCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const emptyCartMessage = document.getElementById('empty-cart-message');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            
+            if (cart.length === 0) {
+                emptyCartMessage.classList.remove('hidden');
+                checkoutBtn.disabled = true;
+                cartItemsContainer.innerHTML = '';
+            } else {
+                emptyCartMessage.classList.add('hidden');
+                checkoutBtn.disabled = false;
+                
+                cartItemsContainer.innerHTML = '';
+                
+                let subtotal = 0;
+                
+                cart.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'flex items-center py-4 border-b cart-item transition duration-200';
+                    itemElement.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded">
+                        <div class="ml-4 flex-1">
+                            <h4 class="font-medium">${item.name}</h4>
+                            <p class="text-sm text-gray-500">Size: ${item.size}</p>
+                            <div class="flex items-center mt-1">
+                                <button onclick="decreaseQuantity(${item.id})" class="text-gray-500 hover:text-indigo-600">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="mx-2">${item.quantity}</span>
+                                <button onclick="increaseQuantity(${item.id})" class="text-gray-500 hover:text-indigo-600">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                                <span class="ml-auto font-medium">$${(item.price * item.quantity).toFixed(2)}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="ml-4 text-gray-400 hover:text-red-500">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    cartItemsContainer.appendChild(itemElement);
+                    
+                    subtotal += item.price * item.quantity;
+                });
+                
+                document.getElementById('cart-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+                document.getElementById('cart-count').textContent = cart.reduce((total, item) => total + item.quantity, 0);
+                document.getElementById('mobile-cart-count').textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            }
+        }
+        
+        function increaseQuantity(itemId) {
+            const item = cart.find(i => i.id === itemId);
+            if (item) {
+                item.quantity += 1;
+                updateCart();
+            }
+        }
+        
+        function decreaseQuantity(itemId) {
+            const item = cart.find(i => i.id === itemId);
+            if (item && item.quantity > 1) {
+                item.quantity -= 1;
+                updateCart();
+            } else {
+                removeFromCart(itemId);
+            }
+        }
+        
+        function removeFromCart(itemId) {
+            cart = cart.filter(i => i.id !== itemId);
+            updateCart();
+        }
+        
+        function showCartNotification() {
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg flex items-center animate-bounce';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle mr-2"></i>
+                <span>Item added to cart!</span>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.remove('animate-bounce');
+                notification.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+        
+        function toggleCart() {
+            const cartSidebar = document.getElementById('cart-sidebar');
+            cartSidebar.classList.toggle('translate-x-full');
+            cartSidebar.classList.toggle('translate-x-0');
+        }
+        
+        function checkout() {
+            const checkoutModal = document.getElementById('checkout-modal');
+            checkoutModal.classList.remove('hidden');
+            
+            const checkoutItemsContainer = document.getElementById('checkout-items');
+            checkoutItemsContainer.innerHTML = '';
+            
+            let subtotal = 0;
+            
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'flex justify-between';
+                itemElement.innerHTML = `
+                    <div>
+                        <span class="font-medium">${item.name}</span>
+                        <span class="text-sm text-gray-500 block">${item.quantity} x $${item.price.toFixed(2)}</span>
+                    </div>
+                    <span class="font-medium">$${(item.price * item.quantity).toFixed(2)}</span>
+                `;
+                checkoutItemsContainer.appendChild(itemElement);
+                
+                subtotal += item.price * item.quantity;
+            });
+            
+            document.getElementById('checkout-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('checkout-total').textContent = `$${(subtotal + 5).toFixed(2)}`;
+        }
+        
+        function placeOrder() {
+            hideCheckoutModal();
+            
+            // Generate random order number
+            const orderNumber = Math.floor(10000 + Math.random() * 90000);
+            document.getElementById('order-number').textContent = orderNumber;
+            
+            // Show confirmation modal
+            const confirmationModal = document.getElementById('confirmation-modal');
+            confirmationModal.classList.remove('hidden');
+            
+            // Clear cart
+            cart = [];
+            updateCart();
+        }
+        
+        function setupEventListeners() {
+            // Payment method toggle
+            document.querySelectorAll('input[name="payment-method"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.id === 'credit-card') {
+                        document.getElementById('card-payment').classList.remove('hidden');
+                        document.getElementById('mpesa-payment').classList.add('hidden');
+                    } else if (this.id === 'mpesa') {
+                        document.getElementById('card-payment').classList.add('hidden');
+                        document.getElementById('mpesa-payment').classList.remove('hidden');
+                    }
+                });
+            });
+            
+            // Form submissions
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                hideLoginForm();
+                // In a real app, you would handle login logic here
+                alert('Login functionality would be implemented here');
+            });
+            
+            document.getElementById('signup-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                hideSignupForm();
+                // In a real app, you would handle signup logic here
+                alert('Signup functionality would be implemented here');
+            });
+        }
+        
+        // Modal functions
+        function showLoginForm() {
+            hideSignupForm();
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+        
+        function hideLoginForm() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+        
+        function showSignupForm() {
+            hideLoginForm();
+            document.getElementById('signup-modal').classList.remove('hidden');
+        }
+        
+        function hideSignupForm() {
+            document.getElementById('signup-modal').classList.add('hidden');
+        }
+        
+        function hideCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
+        }
+        
+        function hideConfirmationModal() {
+            document.getElementById('confirmation-modal').classList.add('hidden');
+        }
+        
+        function toggleAuthDropdown() {
+            document.getElementById('auth-dropdown').classList.toggle('hidden');
+        }
+        
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        }
+        
+        // Close dropdowns when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('#auth-buttons button') && !event.target.closest('#auth-dropdown')) {
+                const dropdown = document.getElementById('auth-dropdown');
+                if (!dropdown.classList.contains('hidden')) {
+                    dropdown.classList.add('hidden');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
